@@ -1,18 +1,18 @@
 "use client"
 
-import { loginSchema } from "@/lib/schemas/loginSchema";
+import { RegisterSchema, registerSchema } from "@/lib/schemas/registerSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, Card, CardBody, CardHeader, Input } from "@nextui-org/react";
 import { useForm } from "react-hook-form";
 import { GiPadlock } from "react-icons/gi";
 
-export default function LoginForm() {
-    const { register, handleSubmit, formState: { errors, isValid } } = useForm<loginSchema>({
-        resolver: zodResolver(loginSchema),
+export default function RegisterForm() {
+    const { register, handleSubmit, formState: { errors, isValid } } = useForm<RegisterSchema>({
+        resolver: zodResolver(registerSchema),
         mode: "onTouched"
     })
 
-    const onSubmit = (data: loginSchema) => {
+    const onSubmit = (data: RegisterSchema) => {
         console.log(data)
     }
 
@@ -22,14 +22,22 @@ export default function LoginForm() {
                 <div className="flex flex-col gap-2 items-center text-secondary">
                     <div className="flex flex-row items-center gap-3">
                         <GiPadlock size={30} />
-                        <h1 className="text-3xl font-semibold">login</h1>
+                        <h1 className="text-3xl font-semibold">Register</h1>
                     </div>
-                    <p className="text-neutral-500">Welcome back to OtherHalf</p>
+                    <p className="text-neutral-500">Welcome to OtherHalf</p>
                 </div>
             </CardHeader>
             <CardBody>
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <div className="space-y-3">
+                    <Input
+                            label="Name"
+                            variant="bordered"
+                            {...register("name")}
+                            defaultValue=""
+                            isInvalid={!!errors.name}
+                            errorMessage={errors.name?.message}
+                        />
                         <Input
                             label="Email"
                             variant="bordered"
@@ -48,7 +56,7 @@ export default function LoginForm() {
                             errorMessage={errors.password?.message}
                         />
                         <Button isDisabled={!isValid} fullWidth color="secondary" type="submit">
-                            Login
+                            Register
                         </Button>
                     </div>
                 </form>

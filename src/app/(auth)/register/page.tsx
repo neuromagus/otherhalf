@@ -1,6 +1,10 @@
-export default function RegisterPage () {
+import RegisterForm from "./RegisterForm";
+
+export default function RegisterPage() {
     return (
-        <>RegisterPage</>
+        <div className="flex items-center justify-center vertical-center">
+            <RegisterForm />
+        </div>
     )
 }
 
