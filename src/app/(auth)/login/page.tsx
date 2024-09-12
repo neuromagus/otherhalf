@@ -1,6 +1,10 @@
-export default function LoginPage () {
+import LoginForm from "./LoginForm";
+
+export default function LoginPage() {
     return (
-    <>LoginPage</>
+        <div className="flex items-center justify-center vertical-center">
+            <LoginForm />
+        </div>
     )
 }
 
