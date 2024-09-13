@@ -2,26 +2,29 @@
 
 import { prisma } from "@/lib/prisma";
 import { registerSchema, RegisterSchema } from "@/lib/schemas/registerSchema";
+import { ActionResult } from "@/types";
+import { User } from "@prisma/client";
 import bcrypt from "bcryptjs"
 import { error } from "console";
 
-export async function registerUser(data: RegisterSchema) {
-    const validated = await registerSchema.safeParseAsync(data)
+export async function registerUser(data: RegisterSchema): Promise<ActionResult<User>> {
+    try {
+        const validated = await registerSchema.safeParseAsync(data)
 
-    if (!validated.success) return { error: validated.error.errors }
+        if (!validated.success) return { status: "error", error: validated.error.errors }
 
-    const { name, email, password } = validated.data
+        const { name, email, password } = validated.data
 
-    // 10 - length of salt, terrible "magic numbers"
-    const hashedPassword = await bcrypt.hash(password, 10)
+        // 10 - length of salt, terrible "magic numbers"
+        const hashedPassword = await bcrypt.hash(password, 10)
 
-    const existingUser = await prisma.user.findUnique({
-        where: { email }
-    })
+        const existingUser = await prisma.user.findUnique({
+            where: { email }
+        })
 
-    return existingUser
-        ? { error: "User already exists" }
-        : prisma.user.create({
+        if (existingUser) return { status: "error", error: "User already exists" }
+
+        const user = await prisma.user.create({
             data: {
                 name,
                 email,
@@ -29,4 +32,9 @@ export async function registerUser(data: RegisterSchema) {
             }
         })
 
+        return { status: "success", data: user }
+    } catch (error) {
+        console.log(error)
+        return { status: "error", error: "Something went wrong" }
+    }
 }
