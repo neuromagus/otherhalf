@@ -1,5 +1,6 @@
 "use client"
 
+import { registerUser } from "@/app/actions/authActions";
 import { RegisterSchema, registerSchema } from "@/lib/schemas/registerSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, Card, CardBody, CardHeader, Input } from "@nextui-org/react";
@@ -8,12 +9,13 @@ import { GiPadlock } from "react-icons/gi";
 
 export default function RegisterForm() {
     const { register, handleSubmit, formState: { errors, isValid } } = useForm<RegisterSchema>({
-        resolver: zodResolver(registerSchema),
+        // resolver: zodResolver(registerSchema),
         mode: "onTouched"
     })
 
-    const onSubmit = (data: RegisterSchema) => {
-        console.log(data)
+    const onSubmit = async (data: RegisterSchema) => {
+        const result = await registerUser(data)
+        console.log(result)
     }
 
     return (
