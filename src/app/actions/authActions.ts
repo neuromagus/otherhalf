@@ -1,6 +1,6 @@
 "use server"
 
-import { signIn } from "@/auth";
+import { signIn, signOut } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { loginSchema } from "@/lib/schemas/loginSchema";
 import { registerSchema, RegisterSchema } from "@/lib/schemas/registerSchema";
@@ -73,4 +73,8 @@ export async function signInUser(data: loginSchema): Promise<ActionResult<string
             return {status: "error", error: "Something else went wrong"}
         }
     }
+}
+
+export async function signOutUser() {
+    await signOut({redirectTo: "/"})
 }
