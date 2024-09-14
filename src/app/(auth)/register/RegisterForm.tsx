@@ -4,10 +4,14 @@ import { registerUser } from "@/app/actions/authActions";
 import { RegisterSchema, registerSchema } from "@/lib/schemas/registerSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, Card, CardBody, CardHeader, Input } from "@nextui-org/react";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { GiPadlock } from "react-icons/gi";
+import { toast } from "react-toastify";
 
 export default function RegisterForm() {
+    const router = useRouter()
+    
     const { register, handleSubmit, setError, formState: { errors, isValid, isSubmitting } } = useForm<RegisterSchema>({
         // resolver: zodResolver(registerSchema),
         mode: "onTouched"
@@ -17,7 +21,8 @@ export default function RegisterForm() {
         const result = await registerUser(data)
 
         if (result.status === "success") {
-            console.log("User registered")
+            toast.success("User registered")
+            router.push("/login")
         } else {
             if (Array.isArray(result.error)) {
                 result.error.forEach(e => {
