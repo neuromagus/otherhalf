@@ -7,6 +7,7 @@ import { Button, Card, CardBody, CardHeader, Input } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { GiPadlock } from "react-icons/gi";
+import { toast } from "react-toastify";
 
 export default function LoginForm() {
     const router = useRouter()
@@ -22,7 +23,7 @@ export default function LoginForm() {
         if (result.status === "success") {
             router.push("/members")
         } else {
-            console.log(result.error)
+            toast.error(result.error as string)
         }
     }
 
