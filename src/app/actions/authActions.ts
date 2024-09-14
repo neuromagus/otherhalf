@@ -1,11 +1,13 @@
 "use server"
 
+import { signIn } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { loginSchema } from "@/lib/schemas/loginSchema";
 import { registerSchema, RegisterSchema } from "@/lib/schemas/registerSchema";
 import { ActionResult } from "@/types";
 import { User } from "@prisma/client";
 import bcrypt from "bcryptjs"
-import { error } from "console";
+import { AuthError } from "next-auth";
 
 export async function registerUser(data: RegisterSchema): Promise<ActionResult<User>> {
     try {
@@ -36,5 +38,39 @@ export async function registerUser(data: RegisterSchema): Promise<ActionResult<U
     } catch (error) {
         console.log(error)
         return { status: "error", error: "Something went wrong" }
+    }
+}
+
+export async function getUserByEmail(email: string) {
+    return prisma.user.findUnique({ where: { email } })
+}
+
+export async function getUserById(id: string) {
+    return prisma.user.findUnique({ where: { id } })
+}
+
+export async function signInUser(data: loginSchema): Promise<ActionResult<string>> {
+    try {
+        const result = await signIn("credentials", {
+            email: data.email,
+            password: data.password,
+            redirect: false
+        })
+        console.log(result)
+
+        return { status: "success", data: `Logged in ${data.email}` }
+    } catch (error) {
+        console.log(error)
+
+        if (error instanceof AuthError) {
+            switch (error.type) {
+                case "CredentialsSignin":
+                    return { status: "error", error: "Invalid credentials" }
+                default:
+                    return {status: "error", error: "Something went wrong"}
+            }
+        } else {
+            return {status: "error", error: "Something else went wrong"}
+        }
     }
 }
