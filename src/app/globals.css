@@ -2,6 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+    * {
+        margin: 0;
+        padding: 0;
+    }
+}
+
 @layer components {
     .vertical-center {
         height: calc(100vh - 64px);
