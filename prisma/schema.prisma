@@ -33,7 +33,7 @@ model User {
     passwordHash  String
     image         String?
     accounts      Account[]
-    Member        Member?
+    member        Member?
 }
 
 // why name/image fields duplicated? Because we don't need a too much JOIN requests
