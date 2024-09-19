@@ -10,13 +10,13 @@ export async function updateMemberProfile(data: MemberEditSchema): Promise<Actio
     try {
         const userId = await getAuthUserId()
 
-        const validated =  memberEditSchema.safeParse(data)
+        const validated = memberEditSchema.safeParse(data)
 
-        if (!validated.success) return {status: "error", error: validated.error.errors}
+        if (!validated.success) return { status: "error", error: validated.error.errors }
 
-        const {name, description, city, country} = validated.data
+        const { name, description, city, country } = validated.data
         const member = await prisma.member.update({
-            where: {userId},
+            where: { userId },
             data: {
                 name,
                 description,
@@ -25,10 +25,32 @@ export async function updateMemberProfile(data: MemberEditSchema): Promise<Actio
             }
         })
 
-        return {status: "success", data: member}
+        return { status: "success", data: member }
     } catch (error) {
         console.log(error)
 
-        return {status: "error", error: "Something went wrong"}
+        return { status: "error", error: "Something went wrong" }
+    }
+}
+
+export async function addImage(url: string) {
+    try {
+        const userId = await getAuthUserId();
+
+        return prisma.member.update({
+            where: { userId },
+            data: {
+                photos: {
+                    create: [
+                        {
+                            url
+                        }
+                    ]
+                }
+            }
+        });
+    } catch (error) {
+        console.log(error);
+        throw error;
     }
 }
