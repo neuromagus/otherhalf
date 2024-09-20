@@ -114,7 +114,6 @@ export async function deleteImage(photo: Photo) {
 
         try {
             await fs.unlink(filePath);
-            console.log(`File ${filePath} deleted successfully`);
         } catch (fileError) {
                 console.error(`Error deleting file ${filePath}:`, fileError);
         }
