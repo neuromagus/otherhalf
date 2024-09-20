@@ -1,6 +1,6 @@
 "use client"
 
-import { setMainImage } from "@/app/actions/userActions"
+import { deleteImage, setMainImage } from "@/app/actions/userActions"
 import { Photo } from "@prisma/client"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
@@ -33,6 +33,16 @@ export default function MemberPhotos({ photos, editing, mainImageUrl }: Props) {
         setLoading({ isLoading: false, id: "", type: "" })
     }
 
+    const onDelete = async (photo: Photo) => {
+        if (photo.url === mainImageUrl) return null
+
+        setLoading({ isLoading: true, id: photo.id, type: "delete" })
+
+        await deleteImage(photo)
+        router.refresh()
+        setLoading({ isLoading: false, id: "", type: "" })
+    }
+
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 p-3">
             {photos && photos.map(photo => (
@@ -47,12 +57,14 @@ export default function MemberPhotos({ photos, editing, mainImageUrl }: Props) {
                     {editing && (
                         <>
                             <div onClick={() => onSetMain(photo)} className="absolute top-3 left-2 z-20">
-                                <StarButton selected={photo.url === mainImageUrl} 
-                                loading={loading.isLoading && loading.type === "main" && loading.id === photo.id} 
-                            />
+                                <StarButton selected={photo.url === mainImageUrl}
+                                    loading={loading.isLoading && loading.type === "main" && loading.id === photo.id}
+                                />
                             </div>
-                            <div className="absolute top-3 right-5 z-20">
-                                <DeleteButton loading={false} />
+                            <div onClick={() => onDelete(photo)} className="absolute top-3 right-5 z-20">
+                                <DeleteButton 
+                                    loading={loading.isLoading && loading.type === "delete" && loading.id === photo.id}
+                                />
                             </div>
                         </>
                     )}

@@ -5,6 +5,8 @@ import { ActionResult } from "@/types";
 import { getAuthUserId } from "./authActions";
 import { prisma } from "@/lib/prisma";
 import { Member, Photo } from "@prisma/client";
+import fs from 'fs/promises';
+import path from 'path';
 
 export async function updateMemberProfile(data: MemberEditSchema, nameUpdated: boolean): Promise<ActionResult<Member>> {
     try {
@@ -90,6 +92,34 @@ export async function getUserInfoForNavbar() {
             where: { id: userId },
             select: { name: true, image: true }
         })
+    } catch (error) {
+        console.log(error)
+        throw error
+    }
+}
+
+export async function deleteImage(photo: Photo) {
+    try {
+        const userId = await getAuthUserId()
+        const filePath = path.join(process.cwd(), 'public', photo.url);
+
+        const updatedMember = await prisma.member.update({
+            where: { userId },
+            data: {
+                photos: {
+                    delete: { id: photo.id }
+                }
+            }
+        })
+
+        try {
+            await fs.unlink(filePath);
+            console.log(`File ${filePath} deleted successfully`);
+        } catch (fileError) {
+                console.error(`Error deleting file ${filePath}:`, fileError);
+        }
+
+        return updatedMember
     } catch (error) {
         console.log(error)
         throw error
