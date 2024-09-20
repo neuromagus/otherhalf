@@ -4,9 +4,9 @@ import { memberEditSchema, MemberEditSchema } from "@/lib/schemas/memberEditSche
 import { ActionResult } from "@/types";
 import { getAuthUserId } from "./authActions";
 import { prisma } from "@/lib/prisma";
-import { Member } from "@prisma/client";
+import { Member, Photo } from "@prisma/client";
 
-export async function updateMemberProfile(data: MemberEditSchema): Promise<ActionResult<Member>> {
+export async function updateMemberProfile(data: MemberEditSchema, nameUpdated: boolean): Promise<ActionResult<Member>> {
     try {
         const userId = await getAuthUserId()
 
@@ -15,6 +15,14 @@ export async function updateMemberProfile(data: MemberEditSchema): Promise<Actio
         if (!validated.success) return { status: "error", error: validated.error.errors }
 
         const { name, description, city, country } = validated.data
+
+        if (nameUpdated) {
+            await prisma.user.update({
+                where: { id: userId },
+                data: { name }
+            })
+        }
+
         const member = await prisma.member.update({
             where: { userId },
             data: {
@@ -52,5 +60,38 @@ export async function addImage(url: string) {
     } catch (error) {
         console.log(error);
         throw error;
+    }
+}
+
+export async function setMainImage(photo: Photo) {
+    try {
+        const userId = await getAuthUserId()
+
+        await prisma.user.update({
+            where: { id: userId },
+            data: { image: photo.url }
+        })
+
+        return prisma.member.update({
+            where: { userId },
+            data: { image: photo.url }
+        })
+    } catch (error) {
+        console.log(error)
+        throw error
+    }
+}
+
+export async function getUserInfoForNavbar() {
+    try {
+        const userId = await getAuthUserId()
+
+        return prisma.user.findUnique({
+            where: { id: userId },
+            select: { name: true, image: true }
+        })
+    } catch (error) {
+        console.log(error)
+        throw error
     }
 }

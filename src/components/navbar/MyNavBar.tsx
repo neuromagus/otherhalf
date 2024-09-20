@@ -4,9 +4,12 @@ import { TiHeartHalfOutline } from "react-icons/ti";
 import NavLink from "./NavLink";
 import { auth } from "@/auth";
 import UserMenu from "./UserMenu";
+import { getUserInfoForNavbar } from "@/app/actions/userActions";
 
 export default async function MyNavBar() {
     const session = await auth()
+
+    const userInfo = session?.user && await getUserInfoForNavbar()
 
     return (
         <Navbar
@@ -34,8 +37,8 @@ export default async function MyNavBar() {
                 <NavLink href="/messages" label="Messages" />
             </NavbarContent>
             <NavbarContent justify="end">
-                {session?.user ? (
-                    <UserMenu user={session.user} />
+                {userInfo ? (
+                    <UserMenu userInfo={userInfo} />
                 ) : (
                     <>
                         <Button as={Link} href="/login" variant="bordered" className="text-white">Login</Button>
