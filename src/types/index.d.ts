@@ -9,10 +9,11 @@ type MessageDto = {
     text: string
     created: string
     dateRead: string | null
-    senderId: string
+    senderId?: string
+    senderName?: string
     senderImage?: string | null
-    recepientId: string
-    recepientName: string
+    recepientId?: string
+    recepientName?: string
     recepientImage?: string | null
 }
 
