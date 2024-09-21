@@ -38,28 +38,30 @@ model User {
 
 // why name/image fields duplicated? Because we don't need a too much JOIN requests
 model Member {
-    id          String   @id @default(cuid())
-    userId      String   @unique
-    name        String
-    gender      String
-    dateOfBirth DateTime
-    created     DateTime @default(now())
-    updated     DateTime @default(now())
-    description String
-    city        String
-    country     String
-    image       String?
-    user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-    photos      Photo[]
-    sourceLikes Like[]   @relation("source")
-    targetLikes Like[]   @relation("target")
+    id                String    @id @default(cuid())
+    userId            String    @unique
+    name              String
+    gender            String
+    dateOfBirth       DateTime
+    created           DateTime  @default(now())
+    updated           DateTime  @default(now())
+    description       String
+    city              String
+    country           String
+    image             String?
+    user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+    photos            Photo[]
+    sourceLikes       Like[]    @relation("source")
+    targetLikes       Like[]    @relation("target")
+    senderMessages    Message[] @relation("sender")
+    recepientMessages Message[] @relation("recepient")
 }
 
 model Photo {
-    id       String  @id @default(cuid())
+    id       String @id @default(cuid())
     url      String
     memberId String
-    member   Member  @relation(fields: [memberId], references: [id], onDelete: Cascade)
+    member   Member @relation(fields: [memberId], references: [id], onDelete: Cascade)
 }
 
 model Like {
@@ -69,4 +71,17 @@ model Like {
     targetMember Member @relation("target", fields: [targetUserId], references: [userId], onDelete: Cascade)
 
     @@id([sourceUserId, targetUserId])
+}
+
+model Message {
+    id               String    @id @default(cuid())
+    text             String
+    created          DateTime  @default(now())
+    senderId         String?
+    recepientId      String?
+    sender           Member?   @relation("sender", fields: [senderId], references: [userId], onDelete: SetNull)
+    recipient        Member?   @relation("recepient", fields: [recepientId], references: [userId], onDelete: SetNull)
+    dateRead         DateTime?
+    senderDeleted    Boolean   @default(false)
+    recepientDeleted Boolean   @default(false)
 }
