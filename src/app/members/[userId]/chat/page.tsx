@@ -1,16 +1,7 @@
-import { CardHeader, Divider, CardBody } from "@nextui-org/react";
+import CardInnerWrapper from "@/components/CardInnerWrapper";
 
 export default function ChatPage() {
     return (
-        <>
-            <CardHeader className="text-2xl font-semibold text-secondary">
-                Chat
-            </CardHeader>
-            <Divider />
-            <CardBody>
-                Chat here
-            </CardBody>
-
-        </>
+        <CardInnerWrapper header="Chat" body={"Chat goes here"} />
     )
 }
