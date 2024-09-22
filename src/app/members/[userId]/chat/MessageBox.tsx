@@ -1,6 +1,9 @@
+"use client"
+
 import { MessageDto } from "@/types"
 import { Avatar } from "@nextui-org/react"
 import clsx from "clsx"
+import { useEffect, useRef } from "react"
 
 type Props = {
     message: MessageDto
@@ -9,6 +12,8 @@ type Props = {
 
 export default function MessageBox({ message, currentUserId }: Props) {
     const isCurrentUserSender = message.senderId === currentUserId
+    const messageEndRef = useRef<HTMLDivElement>(null)
+
     const messageContentClasses = clsx(
         "flex flex-col w-[50%] px-2 py-1",
         {
@@ -48,6 +53,10 @@ export default function MessageBox({ message, currentUserId }: Props) {
         </div>
     )
 
+    useEffect(() => {
+        if (messageEndRef.current) messageEndRef.current.scrollIntoView({ behavior: "smooth" })
+    }, [messageEndRef])
+
     return (
         <div className="grid grid-rows-1">
             <div className={clsx("flex gap-2 mb-3", {
@@ -58,6 +67,7 @@ export default function MessageBox({ message, currentUserId }: Props) {
                 {renderMessageContent()}
                 {isCurrentUserSender && renderAvatar()}
             </div>
+            <div ref={messageEndRef} />
         </div>
     )
 }
