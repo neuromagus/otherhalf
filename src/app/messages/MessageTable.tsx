@@ -2,7 +2,7 @@
 
 import { MessageDto } from "@/types"
 import {
-    Avatar, Button, Card, getKeyValue,
+    Avatar, Button, Card,
     Table, TableBody, TableCell,
     TableColumn, TableHeader, TableRow
 } from "@nextui-org/react"
@@ -39,8 +39,7 @@ export default function MessageTable({ messages }: Props) {
             case "recipientName":
             case "senderName":
                 return (
-                    <div className={`flex items-center gap-2 cursor-pointer 
-                                    ${!item.dateRead && !isOutbox ? "font-semibold" : ""}`}>
+                    <div className="flex items-center gap-2 cursor-pointer">                        
                         <Avatar
                             alt="Image of member"
                             src={(isOutbox ? item.recipientImage : item.senderImage) || "/image/user.png"}
@@ -79,7 +78,7 @@ export default function MessageTable({ messages }: Props) {
                     {item => (
                         <TableRow key={item.id} className="cursor-pointer">
                             {colmunKey => (
-                                <TableCell>
+                                <TableCell className={`${!item.dateRead && !isOutbox ? "font-semibold" : ""}`}>
                                     {renderCell(item, colmunKey as keyof MessageDto)}
                                 </TableCell>
                             )}
