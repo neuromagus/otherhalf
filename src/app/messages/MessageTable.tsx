@@ -42,7 +42,9 @@ export default function MessageTable({ messages }: Props) {
                         <TableRow key={item.id} className="cursor-pointer">
                             {colmunKey => (
                                 <TableCell>
-                                    {getKeyValue(item, colmunKey)}
+                                    <div className={`${!item.dateRead && !isOutbox ? "font-semibold" : ""}`}>
+                                        {getKeyValue(item, colmunKey)}
+                                    </div>
                                 </TableCell>
                             )}
                         </TableRow>
@@ -50,6 +52,5 @@ export default function MessageTable({ messages }: Props) {
                 </TableBody>
             </Table>
         </Card>
-
     )
 }
