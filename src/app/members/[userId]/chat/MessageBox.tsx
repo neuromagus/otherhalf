@@ -41,7 +41,7 @@ export default function MessageBox({ message, currentUserId }: Props) {
         <div className={clsx("flex items-center w-full", {
             "justify-between": isCurrentUserSender
         })}>
-            {message.dateRead && message.recepientId !== currentUserId ? (
+            {message.dateRead && message.recipientId !== currentUserId ? (
                 <span className="text-xs text-black text-italic">
                     (Read 4 mins ago)
                 </span>

@@ -26,7 +26,7 @@ export default function MessageSidebar() {
     }
 
     return (
-        <div className="flex flex-col shadow-md rounded-lg cursor-pointer">
+        <div className="flex flex-col shadow-md rounded-lg cursor-pointer ml-4">
             {items.map(({ key, label, icon: Icon, chip }) => (
                 <div
                     key={key}

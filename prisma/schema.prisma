@@ -54,7 +54,7 @@ model Member {
     sourceLikes       Like[]    @relation("source")
     targetLikes       Like[]    @relation("target")
     senderMessages    Message[] @relation("sender")
-    recepientMessages Message[] @relation("recepient")
+    recipientMessages Message[] @relation("recipient")
 }
 
 model Photo {
@@ -78,10 +78,10 @@ model Message {
     text             String
     created          DateTime  @default(now())
     senderId         String?
-    recepientId      String?
+    recipientId      String?
     sender           Member?   @relation("sender", fields: [senderId], references: [userId], onDelete: SetNull)
-    recipient        Member?   @relation("recepient", fields: [recepientId], references: [userId], onDelete: SetNull)
+    recipient        Member?   @relation("recipient", fields: [recipientId], references: [userId], onDelete: SetNull)
     dateRead         DateTime?
     senderDeleted    Boolean   @default(false)
-    recepientDeleted Boolean   @default(false)
+    recipientDeleted Boolean   @default(false)
 }

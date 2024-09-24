@@ -18,7 +18,7 @@ export async function createMessage(recipientUserId: string, data: MessageSchema
         const message = await prisma.message.create({
             data: {
                 text,
-                recepientId: recipientUserId,
+                recipientId: recipientUserId,
                 senderId: userId
             }
         })
@@ -31,7 +31,7 @@ export async function createMessage(recipientUserId: string, data: MessageSchema
     }
 }
 
-export async function getMessageThread(recepientId: string) {
+export async function getMessageThread(recipientId: string) {
     try {
         const userId = await getAuthUserId()
 
@@ -40,16 +40,57 @@ export async function getMessageThread(recepientId: string) {
                 OR: [
                     {
                         senderId: userId,
-                        recepientId
+                        recipientId
                     },
                     {
-                        senderId: recepientId,
-                        recepientId: userId
+                        senderId: recipientId,
+                        recipientId: userId
                     }
                 ]
             },
             orderBy: {
                 created: "asc"
+            },
+            select: {
+                id: true,
+                text: true,
+                created: true,
+                dateRead: true,
+                sender: {
+                    select: {
+                        userId: true,
+                        name: true,
+                        image: true
+                    }
+                },
+                recipient: {
+                    select: {
+                        userId: true,
+                        name: true,
+                        image: true
+                    }
+                }
+            }
+        })
+
+        return messages.map(message => mapMessageToMessageDto(message))
+    } catch (error) {
+        console.log(error)
+        throw error
+    }
+}
+
+export async function getMessagesByContainer(container: string) {
+    try {
+        const userId = await getAuthUserId()
+        const selector = container === "outbox" ? "senderId" : "recipientId"
+
+        const messages = await prisma.message.findMany({
+            where: {
+                [selector]: userId
+            },
+            orderBy: {
+                created: "desc"
             },
             select: {
                 id: true,

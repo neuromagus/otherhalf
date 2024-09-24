@@ -12,9 +12,9 @@ type MessageDto = {
     senderId?: string
     senderName?: string
     senderImage?: string | null
-    recepientId?: string
-    recepientName?: string
-    recepientImage?: string | null
+    recipientId?: string
+    recipientName?: string
+    recipientImage?: string | null
 }
 
 type MessageWithSenderRecipient = Prisma.MessageGetPayload<{
