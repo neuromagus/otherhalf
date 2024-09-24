@@ -23,3 +23,7 @@ export function handleFormServerErrors<TFieldValues extends FieldValues>(
         setError("root.serverError", { message: errorResponse.error })
     }
 }
+
+export function createChatId(a: string, b: string) {
+    return a > b ? `${b}-${a}` : `${a}-${b}`
+}

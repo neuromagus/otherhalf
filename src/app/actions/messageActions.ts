@@ -1,13 +1,14 @@
 "use server"
 
 import { messageSchema, MessageSchema } from "@/lib/schemas/messageSchema";
-import { ActionResult } from "@/types";
-import { Message } from "@prisma/client";
+import { ActionResult, MessageDto } from "@/types";
 import { getAuthUserId } from "./authActions";
 import { prisma } from "@/lib/prisma";
 import { mapMessageToMessageDto } from "@/lib/mappings";
+import { pusherServer } from "@/lib/pusher";
+import { createChatId } from "@/lib/util";
 
-export async function createMessage(recipientUserId: string, data: MessageSchema): Promise<ActionResult<Message>> {
+export async function createMessage(recipientUserId: string, data: MessageSchema): Promise<ActionResult<MessageDto>> {
     try {
         const userId = await getAuthUserId()
         const validated = messageSchema.safeParse(data)
@@ -20,10 +21,15 @@ export async function createMessage(recipientUserId: string, data: MessageSchema
                 text,
                 recipientId: recipientUserId,
                 senderId: userId
-            }
+            },
+            select: messageSelect
         })
 
-        return { status: "success", data: message }
+        const messageDto = mapMessageToMessageDto(message)
+
+        await pusherServer.trigger(createChatId(userId, recipientUserId), "message:new", messageDto)
+
+        return { status: "success", data: messageDto }
     } catch (error) {
         console.log(error)
 
@@ -53,26 +59,7 @@ export async function getMessageThread(recipientId: string) {
             orderBy: {
                 created: "asc"
             },
-            select: {
-                id: true,
-                text: true,
-                created: true,
-                dateRead: true,
-                sender: {
-                    select: {
-                        userId: true,
-                        name: true,
-                        image: true
-                    }
-                },
-                recipient: {
-                    select: {
-                        userId: true,
-                        name: true,
-                        image: true
-                    }
-                }
-            }
+            select: messageSelect
         })
 
         if (messages.length > 0) {
@@ -98,7 +85,7 @@ export async function getMessagesByContainer(container: string) {
         const userId = await getAuthUserId()
         const conditions = {
             [container === "outbox" ? "senderId" : "recipientId"]: userId,
-            ...(container === "outbox" ? {senderDeleted: false} : {recipientDeleted: false})
+            ...(container === "outbox" ? { senderDeleted: false } : { recipientDeleted: false })
         }
 
         const messages = await prisma.message.findMany({
@@ -106,26 +93,7 @@ export async function getMessagesByContainer(container: string) {
             orderBy: {
                 created: "desc"
             },
-            select: {
-                id: true,
-                text: true,
-                created: true,
-                dateRead: true,
-                sender: {
-                    select: {
-                        userId: true,
-                        name: true,
-                        image: true
-                    }
-                },
-                recipient: {
-                    select: {
-                        userId: true,
-                        name: true,
-                        image: true
-                    }
-                }
-            }
+            select: messageSelect
         })
 
         return messages.map(message => mapMessageToMessageDto(message))
@@ -170,7 +138,7 @@ export async function deleteMessage(messageId: string, isOutbox: boolean) {
         if (messagesToDelete.length > 0) {
             await prisma.message.deleteMany({
                 where: {
-                    OR: messagesToDelete.map(m => ({id: m.id}))
+                    OR: messagesToDelete.map(m => ({ id: m.id }))
                 }
             })
         }
@@ -178,5 +146,25 @@ export async function deleteMessage(messageId: string, isOutbox: boolean) {
         console.log(error)
         throw error
     }
+}
 
+const messageSelect = {
+    id: true,
+    text: true,
+    created: true,
+    dateRead: true,
+    sender: {
+        select: {
+            userId: true,
+            name: true,
+            image: true
+        }
+    },
+    recipient: {
+        select: {
+            userId: true,
+            name: true,
+            image: true
+        }
+    }
 }
