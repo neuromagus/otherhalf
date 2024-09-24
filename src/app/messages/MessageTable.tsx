@@ -29,11 +29,11 @@ export default function MessageTable({ messages }: Props) {
     ]
 
     const handleDeleteMessage = useCallback(async (message: MessageDto) => {
-            setDeleting({ id: message.id, loading: true })
-            await deleteMessage(message.id, isOutbox)
-            router.refresh()
-            setDeleting({ id: "", loading: false })
-    }, [isOutbox, router]) 
+        setDeleting({ id: message.id, loading: true })
+        await deleteMessage(message.id, isOutbox)
+        router.refresh()
+        setDeleting({ id: "", loading: false })
+    }, [isOutbox, router])
 
     const handleRowSelect = (key: Key) => {
         const message = messages.find(m => m.id === key)
@@ -85,7 +85,9 @@ export default function MessageTable({ messages }: Props) {
                 shadow="none"
             >
                 <TableHeader columns={columns}>
-                    {(column) => <TableColumn key={column.key}>{column.label}</TableColumn>}
+                    {(column) => <TableColumn key={column.key} width={column.key === "text" ? "50%" : undefined }>
+                        {column.label}
+                    </TableColumn>}
                 </TableHeader>
                 <TableBody items={messages} emptyContent="No messages for this container">
                     {item => (
