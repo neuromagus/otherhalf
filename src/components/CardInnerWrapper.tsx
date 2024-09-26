@@ -24,7 +24,7 @@ export default function CardInnerWrapper({ header, body, footer }: Props) {
                 {body}
             </CardBody>
             {footer && (
-                <CardFooter>
+                <CardFooter className="flex-shrink-0">
                     {footer}
                 </CardFooter>
             )}
