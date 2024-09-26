@@ -1,5 +1,6 @@
 "use client"
 
+import { timeAgo } from "@/lib/util"
 import { MessageDto } from "@/types"
 import { Avatar } from "@nextui-org/react"
 import clsx from "clsx"
@@ -43,7 +44,7 @@ export default function MessageBox({ message, currentUserId }: Props) {
         })}>
             {message.dateRead && message.recipientId !== currentUserId ? (
                 <span className="text-xs text-black text-italic">
-                    (Read 4 mins ago)
+                    (Read {timeAgo(message.dateRead)})
                 </span>
             ) : <div></div>}
             <div className="flex">
