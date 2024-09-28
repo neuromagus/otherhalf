@@ -10,7 +10,6 @@ export const usePresenceChannel = () => {
         remove: state.remove
     }))
 
-
     // for controlling (useEffect here used more, than one) subscribe/unsubsribe on channel
     const channelRef = useRef<Channel | null>(null)
 
@@ -44,7 +43,7 @@ export const usePresenceChannel = () => {
         }
 
         return () => {
-            if (channelRef.current) {
+            if (channelRef.current && channelRef.current.subscribed) {
                 channelRef.current.unsubscribe()
                 channelRef.current.unbind("pusher:subscription_succeeded")
                 channelRef.current.unbind("pusher:member_added")
