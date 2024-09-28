@@ -1,5 +1,6 @@
 "use client"
 
+import PresenceDot from "@/components/PresenceDot"
 import { calculateAge } from "@/lib/util"
 import { Button, Card, CardBody, CardFooter, Divider, Image } from "@nextui-org/react"
 import { Member } from "@prisma/client"
@@ -21,9 +22,14 @@ export default function MemberSidebar({ member, navLinks }: Props) {
                 alt="User profile main image"
                 className="rounded-full mt-6 aspect-square object-cover"
             />
-            <CardBody>
+            <CardBody className="overflow-hidden">
                 <div className="flex flex-col items-center">
-                    <div className="text-2xl">{member.name}, {calculateAge(member.dateOfBirth)}</div>
+                    <div className="flex">
+                        <div className="text-2xl">{member.name}, {calculateAge(member.dateOfBirth)}</div>
+                        <div>
+                            <PresenceDot member={member} />
+                        </div>
+                    </div>
                     <div className="text-sm text-neutral-500">{member.city}, {member.country}</div>
                 </div>
                 <Divider className="my-3" />
