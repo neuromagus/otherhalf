@@ -1,9 +1,16 @@
 import { deleteMessage } from "@/app/actions/messageActions"
 import { MessageDto } from "@/types"
 import { useSearchParams, useRouter } from "next/navigation"
-import { useState, useCallback, Key } from "react"
+import { useState, useCallback, Key, useEffect } from "react"
+import useMessageStore from "./useMessageStore"
 
-export const useMessages = (messages: MessageDto[]) => {
+export const useMessages = (initialMessages: MessageDto[]) => {
+    const {set, remove, messages } = useMessageStore(state => ({
+        set: state.set,
+        remove: state.remove,
+        messages: state.messages
+    }))
+
     const router = useRouter()
     const searchParams = useSearchParams()
     const isOutbox = searchParams.get("container") === "outbox"
@@ -15,6 +22,14 @@ export const useMessages = (messages: MessageDto[]) => {
         { key: "created", label: isOutbox ? "Date sent" : "Date received" },
         { key: "actions", label: "Actions" }
     ]
+
+    useEffect(() => {
+        set(initialMessages)
+
+        return () => {
+            set([])
+        }
+    }, [initialMessages, set])
 
     const handleDeleteMessage = useCallback(async (message: MessageDto) => {
         setDeleting({ id: message.id, loading: true })
@@ -32,6 +47,7 @@ export const useMessages = (messages: MessageDto[]) => {
     return {
         isOutbox,
         columns,
+        messages,
         deleteMessage: handleDeleteMessage,
         selectRow: handleRowSelect,
         isDeleting
