@@ -1,5 +1,6 @@
 "use client"
 
+import useMessageStore from "@/hooks/useMessageStore"
 import { Chip } from "@nextui-org/react"
 import clsx from "clsx"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
@@ -8,6 +9,10 @@ import { GoInbox } from "react-icons/go"
 import { MdOutlineOutbox } from "react-icons/md"
 
 export default function MessageSidebar() {
+    const { unreadCount } = useMessageStore(state => ({
+        unreadCount: state.unreadCount
+    }))
+
     const router = useRouter()
     const pathname = usePathname()
     const searchParams = useSearchParams()
@@ -37,9 +42,9 @@ export default function MessageSidebar() {
                     onClick={() => handleSelect(key)}
                 >
                     <Icon size={24} />
-                    <div className="flex justify-between flex-row">
+                    <div className="flex justify-between flex-row items-center w-full">
                         <span>{label}</span>
-                        {chip && <Chip>5</Chip>}
+                        {chip && <Chip>{unreadCount}</Chip>}
                     </div>
                 </div>
             ))}
