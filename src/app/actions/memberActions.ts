@@ -21,12 +21,15 @@ export async function getMembers(searchParams: UserFilters) {
 
     const orderBySelector = searchParams?.orderBy || "updated"
 
+    const selectedGender = searchParams?.gender?.toString().split(",") || ["male", "female"]
+
     try {
         return prisma.member.findMany({
             where: {
                 AND: [
                     { dateOfBirth: { gte: minDob } },
-                    { dateOfBirth: { lte: maxDob } }
+                    { dateOfBirth: { lte: maxDob } },
+                    { gender: { in: selectedGender } }
                 ],
                 NOT: {
                     userId: session.user.id
@@ -65,8 +68,8 @@ export async function updateLastActive() {
 
     try {
         return prisma.member.update({
-            where: {userId},
-            data: {updated: new Date()}
+            where: { userId },
+            data: { updated: new Date() }
         })
     } catch (error) {
         console.log(error)
