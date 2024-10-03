@@ -1,6 +1,6 @@
 "use client"
 
-import { Button, Select, SelectItem, Slider } from "@nextui-org/react"
+import { Button, Select, SelectItem, Slider, Selection } from "@nextui-org/react"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { FaFemale, FaMale } from "react-icons/fa"
 
@@ -25,6 +25,14 @@ export default function Filters() {
         router.replace(`${pathname}?${params}`)
     }
 
+    const handleOrderSelect = (value: Selection) => {
+        if (value instanceof Set) {
+            const params = new URLSearchParams(searchParams)
+            params.set("orderBy", value.values().next().value)
+            router.replace(`${pathname}?${params}`)
+        }
+    }
+
     if (pathname !== "/members") return null
 
     return (
@@ -40,24 +48,26 @@ export default function Filters() {
                     ))}
                 </div>
                 <div className="flex flex-row items-center gap-2 w-1/4">
-                    <Slider 
+                    <Slider
                         label="Age range"
                         color="secondary"
                         size="sm"
                         minValue={18}
                         maxValue={100}
-                        defaultValue={[18,100]}
+                        defaultValue={[18, 100]}
                         onChangeEnd={value => handleAgeSelect(value as number[])}
                     />
                 </div>
                 <div className="w-1/4">
-                    <Select 
+                    <Select
                         size="sm"
                         fullWidth
-                        placeholder="Order by"
+                        label="Order by"
                         color="secondary"
                         variant="bordered"
                         aria-label="Order by selector"
+                        selectedKeys={new Set([searchParams.get("orderBy") || "updated"])}
+                        onSelectionChange={handleOrderSelect}
                     >
                         {orderByList.map(item => (
                             <SelectItem key={item.value} value={item.value}>
