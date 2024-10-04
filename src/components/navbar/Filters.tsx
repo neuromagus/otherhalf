@@ -1,7 +1,7 @@
 "use client"
 
 import { useFilters } from "@/hooks/useFilters"
-import { Button, Select, SelectItem, Slider, Selection } from "@nextui-org/react"
+import { Button, Select, SelectItem, Slider } from "@nextui-org/react"
 import { usePathname } from "next/navigation"
 
 export default function Filters() {
