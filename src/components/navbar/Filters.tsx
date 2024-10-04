@@ -11,7 +11,9 @@ export default function Filters() {
             <div className="flex flex-row justify-around items-center">
                 <div className="flex gap-2 items-center">
                     <div className="text-secondary font-semibold text-xl">Results: 10</div>
-                    {isPending && <Spinner  size="sm" color="secondary" />}
+                    <div className="w-6 h-6 flex items-center justify-center">
+                        {isPending && <Spinner size="sm" color="secondary" />}
+                    </div>
                 </div>
                 <div className="flex gap-2 items-center">
                     <div>Gender:</div>
