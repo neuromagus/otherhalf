@@ -2,25 +2,27 @@ import { usePathname, useSearchParams } from "next/navigation"
 import { useRouter } from "next/navigation"
 import { FaMale, FaFemale } from "react-icons/fa"
 import useFilterStore from "./useFilterStore"
-import { useEffect } from "react"
+import { useEffect, useTransition } from "react"
 import { Selection } from "@nextui-org/react"
 
 export const useFilters = () => {
     const pathname = usePathname()
-    const searchParams = useSearchParams()
     const router = useRouter()
+    const [isPending, startTransition] = useTransition()
 
     const { filters, setFilters } = useFilterStore()
     const { gender, ageRange, orderBy } = filters
 
     useEffect(() => {
-        const searchParams = new URLSearchParams()
+        startTransition(() => {
+            const searchParams = new URLSearchParams()
 
-        if (gender) searchParams.set("gender", gender.join(","))
-        if (ageRange) searchParams.set("ageRange", ageRange.toString())
-        if (orderBy) searchParams.set("orderBy", orderBy)
-
-        router.replace(`${pathname}?${searchParams}`)
+            if (gender) searchParams.set("gender", gender.join(","))
+            if (ageRange) searchParams.set("ageRange", ageRange.toString())
+            if (orderBy) searchParams.set("orderBy", orderBy)
+    
+            router.replace(`${pathname}?${searchParams}`)
+        })
     }, [ageRange, gender, orderBy, router, pathname])
 
     const orderByList = [
@@ -54,6 +56,7 @@ export const useFilters = () => {
         selectAge: handleAgeSelect,
         selectGender: handleGenderSelect,
         selectOrder: handleOrderSelect,
-        filters        
+        filters,
+        isPending
     }
 }
