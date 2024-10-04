@@ -27,7 +27,7 @@ export default function ChatForm() {
         } else {
             reset()
             router.refresh()
-            setTimeout(() => setFocus("text"), 50) 
+            setTimeout(() => setFocus("text"), 50)
         }
     }
 
