@@ -5,7 +5,7 @@ import NavLink from "./NavLink";
 import { auth } from "@/auth";
 import UserMenu from "./UserMenu";
 import { getUserInfoForNavbar } from "@/app/actions/userActions";
-import Filters from "./Filters";
+import FiltersWrapper from "./FiltersWrapper";
 
 export default async function MyNavBar() {
     const session = await auth()
@@ -51,7 +51,7 @@ export default async function MyNavBar() {
                     )}
                 </NavbarContent>
             </Navbar>
-            <Filters />
+            <FiltersWrapper />
         </>
     )
 }
