@@ -1,32 +1,42 @@
 "use client"
 
 import { registerUser } from "@/app/actions/authActions";
-import { RegisterSchema, registerSchema } from "@/lib/schemas/registerSchema";
+import { profileSchema, RegisterSchema, registerSchema } from "@/lib/schemas/registerSchema";
 import { handleFormServerErrors } from "@/lib/util";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, Card, CardBody, CardHeader, Input } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 import { GiPadlock } from "react-icons/gi";
 import { toast } from "react-toastify";
+import UserDetailsForm from "./UserDetailsForm";
+import { useState } from "react";
+
+const stepSchemas = [registerSchema, profileSchema]
 
 export default function RegisterForm() {
+    const [activeStep, setActiveStep] = useState(0)
+    const currentValidationSchema = stepSchemas[activeStep]
+
     const router = useRouter()
-    
-    const { register, handleSubmit, setError, formState: { errors, isValid, isSubmitting } } = useForm<RegisterSchema>({
-        resolver: zodResolver(registerSchema),
+
+    const methods = useForm<RegisterSchema>({
+        resolver: zodResolver(currentValidationSchema),
         mode: "onTouched"
     })
+    const { handleSubmit, setError, getValues, formState: { errors, isValid, isSubmitting } } = methods
 
-    const onSubmit = async (data: RegisterSchema) => {
-        const result = await registerUser(data)
+    // const onSubmit = async (data: RegisterSchema) => {
+    const onSubmit = async () => {
+        console.log(getValues())
+        // const result = await registerUser(data)
 
-        if (result.status === "success") {
-            toast.success("User registered")
-            router.push("/login")
-        } else {
-            handleFormServerErrors(result, setError)
-        }
+        // if (result.status === "success") {
+        //     toast.success("User registered")
+        //     router.push("/login")
+        // } else {
+        //     handleFormServerErrors(result, setError)
+        // }
     }
 
     return (
@@ -41,43 +51,21 @@ export default function RegisterForm() {
                 </div>
             </CardHeader>
             <CardBody>
-                <form onSubmit={handleSubmit(onSubmit)}>
-                    <div className="space-y-3">
-                        <Input
-                            label="Name"
-                            variant="bordered"
-                            {...register("name")}
-                            defaultValue=""
-                            isInvalid={!!errors.name}
-                            errorMessage={errors.name?.message}
-                        />
-                        <Input
-                            label="Email"
-                            variant="bordered"
-                            {...register("email")}
-                            defaultValue=""
-                            isInvalid={!!errors.email}
-                            errorMessage={errors.email?.message}
-                        />
-                        <Input
-                            label="Password"
-                            variant="bordered"
-                            type="password"
-                            {...register("password")}
-                            defaultValue=""
-                            isInvalid={!!errors.password}
-                            errorMessage={errors.password?.message}
-                        />
-                        {errors.root?.serverError && (
-                            <p className="text-danger text-sm">{errors.root.serverError.message}</p>
-                        )}
-                        <Button
-                            isLoading={isSubmitting}
-                            isDisabled={!isValid} fullWidth color="secondary" type="submit">
-                            Register
-                        </Button>
-                    </div>
-                </form>
+                <FormProvider {...methods}>
+                    <form onSubmit={handleSubmit(onSubmit)}>
+                        <div className="space-y-3">
+                            <UserDetailsForm />
+                            {errors.root?.serverError && (
+                                <p className="text-danger text-sm">{errors.root.serverError.message}</p>
+                            )}
+                            <Button
+                                isLoading={isSubmitting}
+                                isDisabled={!isValid} fullWidth color="secondary" type="submit">
+                                Register
+                            </Button>
+                        </div>
+                    </form>
+                </FormProvider>
             </CardBody>
         </Card>
     )
