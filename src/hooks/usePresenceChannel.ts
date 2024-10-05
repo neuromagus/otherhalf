@@ -54,5 +54,5 @@ export const usePresenceChannel = (userId: string | null) => {
                 channelRef.current.unbind("pusher:member_removed")
             }
         }
-    }, [handleAddMember, handleRemoveMember, handleSetMembers])
+    }, [handleAddMember, handleRemoveMember, handleSetMembers, userId])
 }
