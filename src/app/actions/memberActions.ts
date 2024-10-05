@@ -11,7 +11,8 @@ export async function getMembers({
     gender = "male,female",
     orderBy = "updated",
     pageNumber = "1",
-    pageSize = "12"
+    pageSize = "12",
+    withPhoto = "true"
 }: GetMemberParams): Promise<PaginatedResponse<Member>> {
     const userId = await getAuthUserId()
     const currentDate = new Date()
@@ -30,7 +31,8 @@ export async function getMembers({
                 AND: [
                     { dateOfBirth: { gte: minDob } },
                     { dateOfBirth: { lte: maxDob } },
-                    { gender: { in: selectedGender } }
+                    { gender: { in: selectedGender } },
+                    ...(withPhoto === "true" ? [{ image: { not: null } }] : [])
                 ],
                 NOT: {
                     userId
@@ -43,7 +45,8 @@ export async function getMembers({
                 AND: [
                     { dateOfBirth: { gte: minDob } },
                     { dateOfBirth: { lte: maxDob } },
-                    { gender: { in: selectedGender } }
+                    { gender: { in: selectedGender } },
+                    ...(withPhoto === "true" ? [{ image: { not: null } }] : [])
                 ],
                 NOT: {
                     userId
