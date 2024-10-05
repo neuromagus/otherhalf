@@ -11,6 +11,7 @@ import { GiPadlock } from "react-icons/gi";
 import { toast } from "react-toastify";
 import UserDetailsForm from "./UserDetailsForm";
 import { useState } from "react";
+import ProfileForm from "./ProfileForm";
 
 const stepSchemas = [registerSchema, profileSchema]
 
@@ -39,6 +40,29 @@ export default function RegisterForm() {
         // }
     }
 
+    const getStepContent = (step: number) => {
+        switch (step) {
+            case 0:
+                return <UserDetailsForm />
+            case 1:
+                return <ProfileForm />
+            default:
+                return "Unknown step"
+        }
+    }
+
+    const onBack = () => {
+        setActiveStep(prev => prev - 1)
+    }
+
+    const onNext = async () => {
+        if (activeStep === stepSchemas.length - 1) {
+            await onSubmit()
+        } else {
+            setActiveStep(prev => prev + 1)
+        }
+    }
+
     return (
         <Card className="w-2/5 mx-auto">
             <CardHeader className="flex flex-col items-center justify-center">
@@ -52,17 +76,22 @@ export default function RegisterForm() {
             </CardHeader>
             <CardBody>
                 <FormProvider {...methods}>
-                    <form onSubmit={handleSubmit(onSubmit)}>
+                    <form onSubmit={handleSubmit(onNext)}>
                         <div className="space-y-3">
-                            <UserDetailsForm />
+                            {getStepContent(activeStep)}
                             {errors.root?.serverError && (
                                 <p className="text-danger text-sm">{errors.root.serverError.message}</p>
                             )}
-                            <Button
-                                isLoading={isSubmitting}
-                                isDisabled={!isValid} fullWidth color="secondary" type="submit">
-                                Register
-                            </Button>
+                            <div className="flex flex-row items-center gap-6">
+                                {activeStep !== 0 && (
+                                    <Button onClick={onBack} fullWidth>Back</Button>
+                                )}
+                                <Button
+                                    isLoading={isSubmitting}
+                                    isDisabled={!isValid} fullWidth color="secondary" type="submit">
+                                    {activeStep === stepSchemas.length - 1 ? "Submit" : "Continue"}
+                                </Button>
+                            </div>
                         </div>
                     </form>
                 </FormProvider>
