@@ -29,7 +29,7 @@ export default function Providers({ children, userId }: { children: ReactNode, u
         }
     }, [setUnreadCount, userId])
 
-    usePresenceChannel()
+    usePresenceChannel(userId)
     useNotificationChannel(userId)
 
     return (
