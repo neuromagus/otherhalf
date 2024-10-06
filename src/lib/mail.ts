@@ -16,3 +16,18 @@ export async function sendVerificationEmail(email: string, token: string) {
         `
     })
 }
+
+export async function sendPasswordResetEmail(email: string, token: string) {
+    const link = `http://localhost:3000/reset-password?token=${token}` // TODO - need change this crap
+
+    return resend.emails.send({
+        from: "testing@resend.dev",
+        to: email,
+        subject: "Reset your password for OtherHalf",
+        html: `
+            <h1>You have requested to reset your password</h1>
+            <p>Click the link below to reset password</p>
+            <a href="${link}">Reset Password</a>
+        `
+    })
+}
