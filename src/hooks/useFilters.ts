@@ -1,4 +1,4 @@
-import { usePathname, useSearchParams } from "next/navigation"
+import { usePathname } from "next/navigation"
 import { useRouter } from "next/navigation"
 import { FaMale, FaFemale } from "react-icons/fa"
 import useFilterStore from "./useFilterStore"
@@ -13,10 +13,11 @@ export const useFilters = () => {
     const { filters, setFilters } = useFilterStore()
     const { gender, ageRange, orderBy, withPhoto } = filters
 
-    const { pageNumber, pageSize, setPage } = usePaginationStore(state => ({
+    const { pageNumber, pageSize, setPage, totalCount } = usePaginationStore(state => ({
         pageNumber: state.pagination.pageNumber,
         pageSize: state.pagination.pageSize,
-        setPage: state.setPage
+        setPage: state.setPage,
+        totalCount: state.pagination.totalCount
     }))
 
     useEffect(() => {
@@ -80,6 +81,6 @@ export const useFilters = () => {
         selectWithPhoto: handleWithPhotoToggle,
         filters,
         isPending,
-
+        totalCount
     }
 }

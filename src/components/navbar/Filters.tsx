@@ -5,14 +5,14 @@ import { Button, Select, SelectItem, Slider, Spinner, Switch } from "@nextui-org
 
 export default function Filters() {
     const { genderList, orderByList, selectAge, selectGender,
-        selectOrder, filters, isPending, selectWithPhoto
+        selectOrder, filters, isPending, totalCount, selectWithPhoto
     } = useFilters()
 
     return (
         <div className="shadow-md py-2">
             <div className="flex flex-row justify-around items-center">
                 <div className="flex gap-2 items-center">
-                    <div className="text-secondary font-semibold text-xl">Results: 10</div>
+                    <div className="text-secondary font-semibold text-xl">Results: {totalCount}</div>
                     <div className="w-6 h-6 flex items-center justify-center">
                         {isPending && <Spinner size="sm" color="secondary" />}
                     </div>
