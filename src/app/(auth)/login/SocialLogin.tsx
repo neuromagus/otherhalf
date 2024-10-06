@@ -15,7 +15,7 @@ export default function SocialLogin() {
                 variant="bordered"
                 onClick={() => onClick("google")}
             >
-                <FcGoogle />
+                <FcGoogle size={20}/>
             </Button>
             <Button
                 size="lg"
@@ -23,7 +23,7 @@ export default function SocialLogin() {
                 variant="bordered"
                 onClick={() => onClick("github")}
             >
-                <FaGithub />
+                <FaGithub size={20}/>
             </Button>
         </div>
     )
