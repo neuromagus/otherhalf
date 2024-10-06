@@ -3,7 +3,7 @@
 import { auth, signIn, signOut } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { loginSchema } from "@/lib/schemas/loginSchema";
-import { registerSchema, RegisterSchema } from "@/lib/schemas/registerSchema";
+import { combinedRegisterSchema, registerSchema, RegisterSchema } from "@/lib/schemas/registerSchema";
 import { ActionResult } from "@/types";
 import { User } from "@prisma/client";
 import bcrypt from "bcryptjs"
@@ -11,11 +11,11 @@ import { AuthError } from "next-auth";
 
 export async function registerUser(data: RegisterSchema): Promise<ActionResult<User>> {
     try {
-        const validated = await registerSchema.safeParseAsync(data)
+        const validated = await combinedRegisterSchema.safeParseAsync(data)
 
         if (!validated.success) return { status: "error", error: validated.error.errors }
 
-        const { name, email, password } = validated.data
+        const { name, email, password, gender, description, dateOfBirth, city, country } = validated.data
 
         // 10 - length of salt, terrible "magic numbers"
         const hashedPassword = await bcrypt.hash(password, 10)
@@ -30,7 +30,17 @@ export async function registerUser(data: RegisterSchema): Promise<ActionResult<U
             data: {
                 name,
                 email,
-                passwordHash: hashedPassword
+                passwordHash: hashedPassword,
+                member: {
+                    create: {
+                        name,
+                        description,
+                        city,
+                        country,
+                        dateOfBirth: new Date(dateOfBirth),
+                        gender
+                    }
+                }
             }
         })
 

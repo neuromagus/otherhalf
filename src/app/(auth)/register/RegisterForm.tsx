@@ -27,17 +27,15 @@ export default function RegisterForm() {
     })
     const { handleSubmit, setError, getValues, formState: { errors, isValid, isSubmitting } } = methods
 
-    // const onSubmit = async (data: RegisterSchema) => {
     const onSubmit = async () => {
-        console.log(getValues())
-        // const result = await registerUser(data)
+        const result = await registerUser(getValues())
 
-        // if (result.status === "success") {
-        //     toast.success("User registered")
-        //     router.push("/login")
-        // } else {
-        //     handleFormServerErrors(result, setError)
-        // }
+        if (result.status === "success") {
+            toast.success("User registered")
+            router.push("/register/success")
+        } else {
+            handleFormServerErrors(result, setError)
+        }
     }
 
     const getStepContent = (step: number) => {
