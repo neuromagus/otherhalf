@@ -10,7 +10,7 @@ async function seedMembers() {
             email: member.email,
             emailVerified: new Date(), // technically, all Emails verified :)
             name: member.name,
-            passwordHash: await hash("password", 10), // TODO: later need add to env
+            passwordHash: await hash("password", 10),
             image: member.image,
             profileComplete: true,
             member: {
@@ -36,7 +36,9 @@ async function seedMembers() {
 }
 
 async function main() {
-    await seedMembers()
+    if(process.env.RUN_SEED === "true" || process.env.NODE_ENV === "development") {
+        await seedMembers()
+    }
 }
 
 main().catch(error => {
