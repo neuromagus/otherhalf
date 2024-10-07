@@ -4,7 +4,7 @@ import { auth, signIn, signOut } from "@/auth";
 import { sendPasswordResetEmail, sendVerificationEmail } from "@/lib/mail";
 import { prisma } from "@/lib/prisma";
 import { LoginSchema } from "@/lib/schemas/loginSchema";
-import { combinedRegisterSchema, RegisterSchema } from "@/lib/schemas/registerSchema";
+import { combinedRegisterSchema, ProfileSchema, RegisterSchema } from "@/lib/schemas/registerSchema";
 import { generateToken, getTokenByToket } from "@/lib/tokens";
 import { ActionResult } from "@/types";
 import { TokenType, User } from "@prisma/client";
@@ -164,7 +164,6 @@ export async function generateResetPasswordEmail(email: string): Promise<ActionR
 
 export async function resetPassword(password: string, token: string | null): Promise<ActionResult<string>> {
     try {
-
         if (!token) return { status: "error", error: "Missing token" }
 
         const existingToken = await getTokenByToket(token)
@@ -194,5 +193,43 @@ export async function resetPassword(password: string, token: string | null): Pro
     } catch (error) {
         console.log(error)
         return { status: "error", error: "Something went wrong" }
+    }
+}
+
+export async function completeSocialLoginProfile(data: ProfileSchema): Promise<ActionResult<string>> {
+    const session = await auth()
+
+    if (!session?.user) return { status: "error", error: "User not found" }
+
+    try {
+        const user = await prisma.user.update({
+            where: { id: session.user.id },
+            data: {
+                profileComplete: true,
+                member: {
+                    create: {
+                        name: session.user.name as string,
+                        image: session.user.image,
+                        gender: data.gender,
+                        dateOfBirth: new Date(data.dateOfBirth),
+                        description: data.description,
+                        city: data.city,
+                        country: data.country
+                    }
+                }
+            },
+            select: {
+                accounts: {
+                    select: {
+                        provider: true
+                    }
+                }
+            }
+        })
+
+        return { status: "success", data: user.accounts[0].provider }
+    } catch (error) {
+        console.log(error)
+        throw error
     }
 }
