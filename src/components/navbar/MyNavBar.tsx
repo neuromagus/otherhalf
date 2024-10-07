@@ -34,9 +34,13 @@ export default async function MyNavBar() {
                     </div>
                 </NavbarBrand>
                 <NavbarContent justify="center">
-                    <NavLink href="/members" label="Matches" />
-                    <NavLink href="/lists" label="Lists" />
-                    <NavLink href="/messages" label="Messages" />
+                    {session && (
+                        <>
+                            <NavLink href="/members" label="Matches" />
+                            <NavLink href="/lists" label="Lists" />
+                            <NavLink href="/messages" label="Messages" />
+                        </>
+                    )}
                 </NavbarContent>
                 <NavbarContent justify="end">
                     {userInfo ? (
