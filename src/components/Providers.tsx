@@ -8,7 +8,8 @@ import { NextUIProvider } from "@nextui-org/react"
 import { ReactNode, useCallback, useEffect, useRef } from "react"
 import { ToastContainer } from "react-toastify"
 
-export default function Providers({ children, userId }: { children: ReactNode, userId: string | null }) {
+export default function Providers({ children, userId, profileComplete }:
+    { children: ReactNode, userId: string | null, profileComplete: boolean }) {
     const isUnreadCountSet = useRef(false)
 
     const { updateUnreadCount } = useMessageStore(state => ({
@@ -28,8 +29,8 @@ export default function Providers({ children, userId }: { children: ReactNode, u
         }
     }, [setUnreadCount, userId])
 
-    usePresenceChannel(userId)
-    useNotificationChannel(userId)
+    usePresenceChannel(userId, profileComplete)
+    useNotificationChannel(userId, profileComplete)
 
     return (
         <NextUIProvider>
