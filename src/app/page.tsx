@@ -1,33 +1,45 @@
-import { auth, signOut } from "@/auth";
+import { auth } from "@/auth";
 import { Button } from "@nextui-org/react";
-import { FaRegSmile } from "react-icons/fa";
+import Link from "next/link";
+import { TiHeartHalfOutline } from "react-icons/ti";
 
 export default async function Home() {
     const session = await auth()
     return (
-        <div>
-            <h3 className="text-2xl font-semibold">User session data:</h3>
+        <div className="flex flex-col justify-center items-center mt-20 gap-6 text-secondary">
+            <TiHeartHalfOutline size={100} />
+            <h1 className="text-4xl font-bold">Welcome to OtherHalf</h1>
             {session ? (
-                <div>
-                    <pre>{JSON.stringify(session, null, 2)}</pre>
-
-                    <form action={async () => {
-                        "use server"
-                        await signOut()
-                    }}>
-                        <Button
-                            type="submit"
-                            color="primary"
-                            variant="bordered"
-                            startContent={<FaRegSmile size={20} />}
-                            href="/members"
-                        >
-                            SignOut
-                        </Button>
-                    </form>
-                </div>
+                <Button
+                    as={Link}
+                    href="/members"
+                    size="lg"
+                    color="secondary"
+                    variant="bordered"
+                >
+                    Continue
+                </Button>
             ) : (
-                <div>Not signed in</div>
+                <div className="flex flex-row gap-4">
+                    <Button
+                        as={Link}
+                        href="/login"
+                        size="lg"
+                        color="secondary"
+                        variant="bordered"
+                    >
+                        Sign in
+                    </Button>
+                    <Button
+                        as={Link}
+                        href="/register"
+                        size="lg"
+                        color="secondary"
+                        variant="bordered"
+                    >
+                        Register
+                    </Button>
+                </div>
             )}
         </div>
     )
