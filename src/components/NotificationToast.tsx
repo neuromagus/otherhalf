@@ -35,17 +35,17 @@ export const newMessageToast = (message: MessageDto) => {
             image={message.senderImage as string}
             href={`/members/${message.senderId}/chat`}
             title={`${message.senderName} has sent you a new message`}
-         />
+        />
     )
 }
 
-export const newLikeToast = (image: string | null, name: string, userId: string) => {
+export const newLikeToast = (name: string, image: string | null, userId: string) => {
     toast(
         <NotificationToast
-            image={image}
+            image={image || '/images/user.png'}
             href={`/members/${userId}`}
             title={`You have been liked by ${name}`}
             subtitle={`Click here to view ${name}'s profile`}
-         />
+        />
     )
 }
