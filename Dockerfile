@@ -33,6 +33,9 @@ COPY --from=builder /app/next.config.mjs ./next.config.mjs
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
+# set permissions for uploading and other things 
+RUN chown -R nextjs:nodejs /app
+
 USER nextjs
 
 EXPOSE 3000

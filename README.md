@@ -6,6 +6,7 @@ Used technologies:
 - Postgres
 - Prisma ORM
 - NextAuth (v5)
+- Zod, Zustand
 - Realtime communication using Pusher
 - Email verification / Forgot password functionality using Resender
 - NextUI
